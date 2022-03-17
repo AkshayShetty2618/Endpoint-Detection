@@ -11,7 +11,8 @@ def main():
     print(f"initCamera returns {ret}")
 
     # set color mode
-    ret = ueye.is_SetColorMode(hcam, ueye.IS_COLORMODE_CBYCRY)
+    ret = ueye.is_SetColorMode(hcam, ueye.IS_CM_BGR8_PACKED)
+    #ret = ueye.is_SetColorMode(hcam, ueye.IS_COLORMODE_CBYCRY)
     print(f"SetColorMode IS_CM_BGR8_PACKED returns {ret}")
 
     # set region of interest
@@ -28,7 +29,7 @@ def main():
     # allocate memory
     mem_ptr = ueye.c_mem_p()
     mem_id = ueye.int()
-    bitspixel = 32  # for colormode = IS_CM_BGR8_PACKED
+    bitspixel = 24 # for colormode = IS_CM_BGR8_PACKED
     ret = ueye.is_AllocImageMem(hcam, width, height, bitspixel,
                                 mem_ptr, mem_id)
     print(f"AllocImageMem returns {ret}")
@@ -37,7 +38,7 @@ def main():
     ret = ueye.is_SetImageMem(hcam, mem_ptr, mem_id)
     print(f"SetImageMem returns {ret}")
 
-    ret = ueye.is_SetColorMode(hcam, 0)
+    #ret = ueye.is_SetColorMode(hcam, 0)
 
     # continuous capture to memory
     ret = ueye.is_CaptureVideo(hcam, ueye.IS_DONT_WAIT)
@@ -47,7 +48,7 @@ def main():
     lineinc = width * int((bitspixel + 7) / 8)
     while True:
         img = ueye.get_data(mem_ptr, width, height, bitspixel, lineinc, copy=False)
-        img = np.reshape(img, (height, width, 4))
+        img = np.reshape(img, (height, width, 3))
         cv2.imshow('uEye Python Example (q to exit)', img)
 
         if cv2.waitKey(1) & 0xFF == ord('t'):
