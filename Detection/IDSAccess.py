@@ -40,7 +40,7 @@ class IDSAccess:
     def read(self):
         img = ueye.get_data(self.mem_ptr, self.width, self.height, self.bitspixel, self.lineinc, copy=False)
         img = np.reshape(img, (self.height, self.width, 3))
-        out = {True, img}
+        out = (True, img)
         return out
 
     def release(self):

@@ -25,9 +25,9 @@ if __name__ == '__main__':
 
     filePath = r'G:\archive\images\maksssksksss21.png'
 
-    detectFromImage(filePath)
+    #detectFromImage(filePath)
     #detectFromVideo(filePath)
-    #detectFromCam(False)
+    detectFromCam(True)
 
 
 
