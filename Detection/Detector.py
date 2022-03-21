@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 from IDSAccess import IDSAccess
+from FPS import FPS
 
 
 class Detector:
@@ -13,6 +14,8 @@ class Detector:
         self.boxes = []
         self.confidences = []
         self.class_ids = []
+        self.flag = 0
+        self.ctr = 0
 
     def imageDetection(self, path):
 
@@ -39,6 +42,7 @@ class Detector:
         else:
             cap = cv.VideoCapture(0)
 
+        fps = FPS()
         while True:
             _, img = cap.read()
             img = cv.resize(img, (self.width, self.height))
@@ -48,8 +52,9 @@ class Detector:
             outputLayerName = self.net.getUnconnectedOutLayersNames()
             layerOutputs = self.net.forward(outputLayerName)
 
+
             indexes = self.getBoundingbox(layerOutputs)
-            self.showOutput(indexes=indexes, img=img)
+            self.showOutput(indexes=indexes, img=img, isImage=True, fps=fps)
             if cv.waitKey(1) == ord('q'):
                 break
 
@@ -79,16 +84,30 @@ class Detector:
         indexes = cv.dnn.NMSBoxes(self.boxes, self.confidences, .5, .4)
         return indexes
 
-    def showOutput(self, indexes, img):
+    def showOutput(self, indexes, img, isImage=False, fps=None):
         font = cv.FONT_HERSHEY_PLAIN
         color = (0, 0, 255)
         if len(indexes) > 0:
+            self.flag = 1
             for i in indexes.flatten():
                 x, y, w, h = self.boxes[i]
                 label = str(self.classes[self.class_ids[i]])
                 confidence = str(round(self.confidences[i], 2))
                 cv.rectangle(img, (x, y), (x + w, y + h), color, 2)
                 cv.putText(img, label + " " + confidence, (x, y), font, 2, color, 2)
+
+        if isImage:
+            if len(indexes) == 0 and self.flag == 1:
+                self.ctr = self.ctr + 1
+                if self.ctr > 5:
+                    cv.putText(img, "Defect Removed", (0, 15), font, 2, color, 2)
+                    if self.ctr > 10:
+                        self.ctr = 0
+                        self.flag = 0
+
+            print("FPS :" + fps.getFPS())
+
+
 
         cv.imshow('img', img)
         self.boxes = []
