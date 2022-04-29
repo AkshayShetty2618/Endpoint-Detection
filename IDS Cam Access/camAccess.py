@@ -52,7 +52,7 @@ def main():
         cv2.imshow('uEye Python Example (q to exit)', img)
 
         if cv2.waitKey(1) & 0xFF == ord('t'):
-            cv2.imwrite('F:\TUhh\Thesis\images\PY_new\pyImage_' + str(n) + '.jpg', img)
+            cv2.imwrite('F:\TUhh\Thesis\images\corrosion InProcess\cImage_' + str(n) + '.jpg', img)
             n = n + 1
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
